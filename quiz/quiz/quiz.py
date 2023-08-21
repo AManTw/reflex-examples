@@ -16,10 +16,12 @@ question_style = {
 
 class State(rx.State):
     """The app state."""
+
     default_answers = [None, None, [False, False, False, False, False]]
-    answers:List[Any]
+    answers: List[Any]
     answer_key = ["False", "[10, 20, 30, 40]", [False, False, True, True, True]]
     score: int
+
     def onload(self):
         self.answers = copy.deepcopy(self.default_answers)
 
@@ -29,14 +31,20 @@ class State(rx.State):
         else:
             self.answers[index][sub_index] = answer
 
+    def index(self):
+        rx.button("Alert", on_click=rx.window_alert("Hello World!"))
+
     def submit(self):
-        total, correct = 0, 0
-        for i in range(len(self.answers)):
-            if self.answers[i] == self.answer_key[i]:
-                correct += 1
-            total += 1
-        self.score = int(correct / total * 100)
-        return rx.redirect("/result")
+        if list(self.answers) == self.default_answers:
+            rx.window_alert("Hello World!")
+        else:
+            total, correct = 0, 0
+            for i in range(len(self.answers)):
+                if self.answers[i] == self.answer_key[i]:
+                    correct += 1
+                total += 1
+            self.score = int(correct / total * 100)
+            return rx.redirect("/result")
 
 
 def header():
@@ -63,7 +71,7 @@ def question1():
             ["True", "False"],
             default_value=State.default_answers[0],
             default_checked=True,
-            on_change=lambda answer: State.set_answers(answer, 0)
+            on_change=lambda answer: State.set_answers(answer, 0),
         ),
         style=question_style,
     )
@@ -140,6 +148,21 @@ def index():
                 width="6em",
                 padding="1em",
                 on_click=State.submit,
+            ),
+            rx.vstack(
+                rx.script(
+                    """const handle_press = (arg) => {
+            window.alert("You clicked at " + arg.clientX + ", " + arg.clientY);
+            }"""
+                ),
+                rx.button(
+                    "Submit",
+                    bg="green",
+                    color="white",
+                    width="6em",
+                    padding="1em",
+                    on_click=rx.client_side("handle_press(args)"),
+                ),
             ),
             spacing="1em",
         ),
