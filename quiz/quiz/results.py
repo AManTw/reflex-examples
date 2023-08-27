@@ -49,7 +49,7 @@ def results(State):
                 ),
                 rx.foreach(State.answers, lambda answer, i: render_answer(State, i)),
             ),
-            rx.link(rx.button("Take Quiz Again"), href="/"),
+            rx.link(rx.button("Take Quiz Again",bg="lightblue",), href="/"),
             bg="white",
             padding_x="5em",
             padding_y="2em",
